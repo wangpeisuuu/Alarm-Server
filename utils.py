@@ -32,29 +32,32 @@ class Tag():
 	def tag_name_delta(self):
 		self.tag["tag_name"] = "{}_{}_delta".format(self.room, self.alarm_type)
 
-	def _tag_scale_1(self):
+	def tag_scale_1(self):
 		self.tag["tag_scale"] = "[{\"tag\":0,\"source\":0},{\"tag\":1,\"source\":1}]"
 
-	def _tag_scale_10(self):
+	def tag_scale_10(self):
 		self.tag["tag_scale"] = "[{\"tag\":0,\"source\":0},{\"tag\":1,\"source\":10}]"
 
-	def _tag_scale_1000(self):
+	def tag_scale_1000(self):
 		self.tag["tag_scale"] = "[{\"tag\":0,\"source\":0},{\"tag\":1,\"source\":1000}]"
 
 	def tag_unit(self):
 		unit = ""
 		if self.alarm_type == "Temp":
 			unit = " Celcius"
-			self._tag_scale_10()
+			self.tag_scale_10()
 		elif self.alarm_type == "RH" or self.alarm_type == "O2-Life" :
 			unit = "%"
-			self._tag_scale_10()
+			self.tag_scale_10()
 		elif "CO2" in self.alarm_type :
 			unit = "ppm"
-			self._tag_scale_1()
+			self.tag_scale_1()
 		elif self.alarm_type == "DP":
 			unit = "inH2O"
-			self._tag_scale_1000()
+			self.tag_scale_1000()
+		self.tag["tag_unit"] = unit
+
+	def set_tag_unit(self, unit):
 		self.tag["tag_unit"] = unit
 
 	def tag_type(self, ttype):
@@ -94,11 +97,11 @@ class Tag():
 				# 		value
 				# 		delta
 		if "value" not in d[self.room][self.alarm_type]:
-			d[self.room][self.alarm_type]["value"] = Tag(self.room, self.alarm_type, "value", self.mid, self.raddr+1) # TODO
+			d[self.room][self.alarm_type]["value"] = Tag(self.room, self.alarm_type, "value", self.mid, self.raddr) # TODO
 
 		value = d[self.room][self.alarm_type]["value"].get_tag_name()
 		if self.sp == None:
-			sp = Tag(self.room, self.alarm_type, "sp", self.mid, self.raddr).get_tag_name()
+			sp = Tag(self.room, self.alarm_type, "sp", self.mid, self.raddr-1).get_tag_name()
 		else:
 			sp = self.sp
 		self.tag_name_delta()
@@ -158,6 +161,8 @@ class TagAlarm(Alarm):
 
 		Alarm.alarmlist.append(self.alarm)
 
+	def return_tag(self, room, alarm_type, tag_type):
+		return d[room][alarm_type][tag_type]
 
 class ModAlarm(Alarm):
 

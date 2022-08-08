@@ -43,7 +43,7 @@ tag_alarm = {
 			"source": "",
 			"debounce": 15,
 			"cgroups": "default",
-			"delay": 15,
+			"delay": 240,
 			"sendalarm": "Till Acknowledged",
 			"message": "alarm message",
 			"trigger_edge": "ON",
